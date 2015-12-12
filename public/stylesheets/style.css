@@ -1,0 +1,42 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+#header {
+	width: 100%;
+	background: #eee;
+}
+#header .primary-nav li {
+	float: left;
+	list-style: none;
+	margin: 0 10px 0 0;
+}
+
+#sidebar {
+	width: 20%;
+	float: left;
+}
+
+#content {
+	width: 80%;
+	float: left;
+}
+
+#footer {
+	width: 100%;
+	background: #eee;
+	clear: both;
+}
+a {
+  color: #00B7FF;
+}
+
+.clearfix:after {
+	visibility: hidden;
+	display: block;
+	font-size: 0;
+	content: " ";
+	clear: both;
+	height: 0;
+}

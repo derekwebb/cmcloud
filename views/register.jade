@@ -1,0 +1,18 @@
+extends layout
+
+block content
+	#content
+		h1#page-title Register
+		div= req
+		form(name="user-login", method="post")
+			div.input
+				span.label Username
+				input(type="text", name="username")
+			div.input
+				span.label Email address
+				input(type="text", name="useremail")
+			div.input
+				span.label Password
+				input(type="password", name="password")
+			div.actions
+				input(type="submit", value="Register")

@@ -1,0 +1,27 @@
+html
+	head
+		title CMCloud | #{title}
+		block scripts
+			script(src='/javascripts/jquery.min.js')
+		block styles
+			link(rel='stylesheet', href='/stylesheets/style.css')
+	body
+		block header
+			#header(class="clearfix")
+				block primary_nav
+					#primary-nav
+						ul(class="primary-nav")
+							li(class="first")
+								a(href="/") Home
+							li
+								a(href="/user/register") Register
+							li(class="last")
+								a(href="/user/login") Login
+		block content
+			#content
+		block sidebar
+			#sidebar
+				p Default sidebar content
+		block footer
+			#footer(class="clearfix")
+				p Footer content
