@@ -22,20 +22,19 @@ var config = {
 
   registrationSuccess: 'Registration was successful!',
   registrationInfo: 'Further information has been sent to you email address.',
-  loginSuccess: 'Login was successful! Welcome back',
+  loginSuccess: 'Login was successful!',
+  loginWelcome: 'Welcome back',
   loginFailure: 'Pass word or username is incorrect. Please try again.'
 };
 
 passport.use('local', new LocalStrategy(
   function(username, password, done) {
-    console.log(username);
     var next = function() {};
+    //db.inventory.find( { $or: [ { quantity: { $lt: 20 } }, { price: 10 } ] } )
     db.get('users').findOne({ username: username }, function (err, user, next) {
       if (err) { console.log(err); return done(err); }
       if (!user) { console.log('No user found'); return done(null, false); }
-      //if (!user.verifyPassword(password)) { return done(null, false); }
-      console.log('User found!');
-      console.log(user);
+      if (!verifyPassword(password, user)) { return done(null, false); }
       return done(null, user);
     });
   }
@@ -49,14 +48,23 @@ passport.deserializeUser(function(user, done) {
   done(null, user);
 });
 
-/* GET home page. */
+/* GET user home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'User' });
+  res.render('index', {
+    title: 'Users',
+    messages: req.flash(),
+    user: (req.user) ? req.user : null
+  });
 });
 
 
+/* Get user register page */
 router.get('/register', function(req, res, next){
-	res.render('register', {messages: req.flash()});
+	res.render('register', {
+    title: 'Register',
+    messages: req.flash(),
+    user: (req.user) ? req.user : null
+  });
 });
 
 
@@ -87,15 +95,31 @@ router.post('/register', function (req, res, next) {
 });
 
 
-router.get('/login', function(req, res, next){
-	res.render('login');
+router.get('/login', function(req, res, next) {
+	res.render('login', {
+    title: 'Login', 
+    messages: req.flash(),
+    user: (req.user) ? req.user : null
+  });
 });
+
+router.get('/logout', function(req, res, next) {
+  req.session.destroy();
+  res.redirect('/');
+})
 
 // POST method route
 router.post('/login', 
-  passport.authenticate('local', { failureRedirect: '/user/login' }),
+  passport.authenticate('local', { 
+    failureRedirect: '/user/login',
+    failureFlash: 'Invalid username or password.'
+  }),
   function(req, res) {
-    req.flash('success', 'login successful');
+    var user = req.user;
+    req.flash('success', config.loginSuccess);
+    if (config.hasOwnProperty('loginWelcome')) {
+      req.flash('success', config.loginWelcome + ' ' + user.username);
+    }
     res.redirect('/');
   }
 );
@@ -115,6 +139,7 @@ function hashPassword(input, callback) {
     if (err) {
       return callback(err);
     }
+    input.salt = salt;
 
     crypto.pbkdf2(input.user.pass, salt, config.iterations, config.hashBytes,
       function(err, hash) {
@@ -140,12 +165,28 @@ function hashPassword(input, callback) {
   });
 }
 
+
+function verifyPassword(password, user) {
+  var dbPass = user.password;
+  var dbSalt = dbPass.substring(16, 16 + (config.saltBytes * 2));
+  var dbHash = dbPass.substring(16 + (config.saltBytes * 2), 16 + (config.saltBytes * 2) + (config.hashBytes * 2));
+
+  salt = new Buffer(dbSalt, "hex");
+
+  var hash = crypto.pbkdf2Sync(password, salt, config.iterations, config.hashBytes);
+
+  if (hash.toString('hex') === dbHash) {
+    return true;
+  }
+  return false;
+}
+
+
 function insertUser() {
   // Set our collection
   var input = arguments[0];
   var hash = arguments[1];
   var users = input.db.get('users');
-
 
   // Submit user to db
   users.insert({
