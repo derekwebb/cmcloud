@@ -31,7 +31,7 @@ passport.use('local', new LocalStrategy(
   function(username, password, done) {
     var next = function() {};
     //db.inventory.find( { $or: [ { quantity: { $lt: 20 } }, { price: 10 } ] } )
-    db.get('users').findOne({ username: username }, function (err, user, next) {
+    db.get('users').findOne({ $or: [{username: username}, {useremail: username}]}, function (err, user, next) {
       if (err) { console.log(err); return done(err); }
       if (!user) { console.log('No user found'); return done(null, false); }
       if (!verifyPassword(password, user)) { return done(null, false); }
