@@ -1,3 +1,7 @@
+// Environment and configurations
+var e = require('../env');
+var config = require('../config');
+
 var express = require('express');
 var router = express.Router();
 var session = require('express-session');

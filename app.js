@@ -1,3 +1,8 @@
+// Environment and configurations
+var e = require('./env'); // environment setting
+var keys = require('./keys'); // App keys
+var config = require('./config'); // application configurations
+
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
@@ -7,9 +12,7 @@ var bodyParser = require('body-parser');
 var flash = require('express-flash');
 
 // Database connection
-/*var mongo = require('mongodb');
-var monk = require('monk');*/
-var db = require('./db'); //require('monk')('localhost/cmcloud');
+var db = require('./db'); //.. require('monk')(...);
 
 // Configuring Sessions and Passport
 var session = require('express-session');
@@ -22,14 +25,14 @@ var user   = require('./routes/user');
 var app = express();
 
 // sets port 8080 to default or unless otherwise specified in the environment
-app.set('port', process.env.PORT || 8090);
+app.set('port', process.env.PORT || config.app.port[e.env.current]);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
 // uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+app.use(favicon(path.join(__dirname, 'public', '/images/cloud-favicon.png')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -38,7 +41,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // required for passport
 app.use(session({
-    secret: 'h3$hsfi9*ifbaUY-re',
+    secret: keys.SESSION_SECRET,
     name: 'cmcloud',
     proxy: true,
     resave: true,
