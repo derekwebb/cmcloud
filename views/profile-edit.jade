@@ -1,0 +1,14 @@
+extends profile
+
+block content
+	#content(class="col-xs-12 col-md-8")
+		
+		h1(id='page-title')= title
+
+		form(class='form profile-edit', method='post')
+			div
+				label(for='profile-bio') Mini-bio
+			div
+				textarea(name='profile-bio', rows='4', cols='40')= user.biography
+			br
+			input(type='submit', class="form-submit")

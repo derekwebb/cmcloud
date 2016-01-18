@@ -1,0 +1,29 @@
+extends layout
+
+block content
+	#content(class="col-xs-12 col-md-8")
+		
+		h1(id='page-title')= u.user.username
+
+		- if (u.profile && u.profile.github)
+			- console.log(user)
+			
+			div
+				a(href= '/user/'+u.user._id, class= 'local-profile', title= 'Local profile img')
+					img(src= u.profile.github._json.avatar_url, height=150, width=150)
+			div
+				a(href= '/user/'+u.user._id, class= 'local-profile', title= 'Local profile')
+					span= u.profile.github.username
+			- if (u.profile.github._json.blog)
+				div
+					a(href= u.profile.github._json.blog, class= 'blog-link', title= 'Blog site') Blog
+			div
+				a(href= u.profile.github.profileUrl, class= 'github-profile', title= 'GitHub profile')
+					span GitHub  
+		
+
+block sidebar
+	#sidebar(class="col-xs-12 col-md-4")
+		p Profile sidebar
+
+

@@ -1,18 +1,18 @@
 extends layout
 
 block content
-	#content
+	#content(class="col-xs-12 col-md-8")
 		h1#page-title Login
 
-		form(name="user-login", method="post")
-			div.input
+		form(name="user-login", method="post", class="form user-form user-register-form")
+			div.form-group
 				span.label Username or Email
-				input(type="text", name="username")
-			div.input
+				input(type="text", name="username", class="text-field", placeholder='Username', required, autofocus)
+			div.form-group
 				span.label Password
-				input(type="password", name="password")
+				input(type="password", name="password", class="text-field", placeholder='Password',required)
 			div.actions
-				input(type="submit", value="Login")
+				input(type="submit", value="Login", class="btn btn-primary")
 
 		div(class="auth-options")
 			a(href="/user/auth/github") GitHub

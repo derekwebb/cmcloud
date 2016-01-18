@@ -1,61 +1,80 @@
-html
+html(lang="en")
 	head
 		title CMCloud | #{title}
+		block meta
+			meta(name="viewport", content="width=device-width, initial-scale=1")
 		block scripts
 			script(src='/javascripts/jquery.min.js')
+			script(src='/javascripts/bootstrap.min.js')
 		block styles
+			link(rel='stylesheet', href='/stylesheets/bootstrap.min.css')
+			link(rel='stylesheet', href='/stylesheets/bootstrap-theme.min.css')
 			link(rel='stylesheet', href='/stylesheets/style.css')
+			link(rel='stylesheet', href='/stylesheets/mobile.css')
 	body
-		block header
-			#header
-				block primary_nav
-					#primary-nav
-						ul(class="primary-nav clearfix")
-							li(class="first")
-								a(href="/") Home
-							li
-								a(href="/user") Users
-							- if (!user)
+		#wrapper(class="clearfix")
+			block header
+				#header(class="clearfix")
+					block logo
+						a(href="/")
+							img(class="logo", src="/images/cm-cloud.png")
+					block primary_nav
+						#primary-nav
+							ul(class="primary-nav clearfix")
+								li(class="first")
+									a(href="/") Home
 								li
-									a(href="/user/register") Register
-								li(class="last")
-									a(href="/user/login") Login
-							- if (user)
-								li
-									a(href="/user/logout") Logout
-							
-		block userStatus
-			- if (user)
-				#user-status
-					span You're logged in as #{user.username}
-		block messages
-			#messages
-				if (messages.success)
-					if (messages.success.length > 1)
-						ul(class = "messages success")
-							each val in messages.success
-								li(class="message success")= val
-					else
-							p(class="message success")= messages.success
-				if (messages.info)
-					if (messages.info.length > 1)
-						ul(class = "messages info")
-							each val in messages.info
-								li(class="message info")= val
-					else
-						p(class="message info")= messages.info
-				if (messages.error)
-					if (messages.error.length > 1)
-						ul(class = "messages error")
-							each val in messages.error
-								li(class="message error")= val
-					else
-							p(class="message error")= messages.error
-		block content
-			#content
-		block sidebar
-			#sidebar
-				p Default sidebar content
-		block footer
-			#footer(class="clearfix")
-				p Footer content
+									a(href='/about') About
+								- if (!user)
+									li
+										a(href="/user/register") Register
+									li(class="last")
+										a(href="/user/login") Login
+								- if (user)
+									li
+										a(href="/users") Users
+									li
+										a(href="/user/logout") Logout
+								
+			block userStatus
+				- if (user)
+					#user-status
+						span You're logged in as #{user.username}
+			block messages
+				#messages
+					if (messages.success)
+						if (messages.success.length > 1)
+							ul(class = "alert alert-success")
+								a(href="#", class="close", data-dismiss="alert", aria-label="close") &times
+								each val in messages.success
+									li(class="item")= val
+						else
+								p(class="alert alert-success")= messages.success
+									a(href="#", class="close", data-dismiss="alert", aria-label="close") &times
+					if (messages.info)
+						if (messages.info.length > 1)
+							ul(class = "alert alert-info")
+								a(href="#", class="close", data-dismiss="alert", aria-label="close") &times
+								each val in messages.info
+									li(class="item")= val
+						else
+							p(class="alert alert-info")= messages.info
+								a(href="#", class="close", data-dismiss="alert", aria-label="close") &times
+					if (messages.error)
+						if (messages.error.length > 1)
+							ul(class = "alert alert-danger")
+								a(href="#", class="close", data-dismiss="alert", aria-label="close") &times
+								each val in messages.error
+									li(class="item")= val
+						else
+								p(class="alert alert-danger")= messages.error
+									a(href="#", class="close", data-dismiss="alert", aria-label="close") &times
+			#main-row(class="clearfix")
+				block content
+					#content(class="col-xs-12 col-md-8")
+				block sidebar
+					#sidebar(class="col-xs-12 col-md-4")
+						p Default sidebar content
+			block footer
+				#footer
+					p Footer content

@@ -1,5 +1,6 @@
 // Environment and configurations
 var e = require('../env');
+var u = require('../userUtil');
 var keys = require('../keys');
 var config = require('../config');
 
@@ -11,9 +12,12 @@ var router = express.Router();
 var flash = require('express-flash');
 var db = require('../db');
 
+var Promise = require('promise');
+
 // Authentication strategies
 var LocalStrategy = require('passport-local').Strategy;
 var GitHubStrategy = require('passport-github2').Strategy;
+
 
 // Local authentication strategy
 passport.use('local', new LocalStrategy(
@@ -29,6 +33,7 @@ passport.use('local', new LocalStrategy(
   }
 ));
 
+
 // Github authentication strategy
 passport.use(new GitHubStrategy({
     clientID: keys.GITHUB_CLIENT_ID,
@@ -37,59 +42,66 @@ passport.use(new GitHubStrategy({
   },
   function(accessToken, refreshToken, profile, done) {
     
-    // asynchronous verification, for effect...
+    // asynchronous verification
     process.nextTick(function () {
 
       profile = {github: profile};
 
       // @TODO, it would be nice to be able to search by _id here.
-      db.get('users').find({username: profile.github.username}, function (err, user, next) {
+      db.get('users').find({ $or: [{username: profile.github.username}, {useremail: profile.github.emails[0].value}]}, function (err, user, next) {
 
-        // A new user
-        if (user.length < 1) {
-          var arguments = {
-            user: { name: profile.github.username, email: profile.github.emails[0].value },
-            profile: profile
+        // Generate large unguessable password stand-in
+        crypto.randomBytes(52, function(err, pass) {
+          if (err) {
+            return done(null, err);
           }
-          insertUser(arguments, 'This Is a T3st Pass - Create HASH here!');
-        }
+        
+          // A new user
+          if (user.length < 1) {
+            var arguments = {
+              user: { name: profile.github.username, email: profile.github.emails[0].value },
+              profile: profile
+            }
+            user = insertUser(arguments, pass).query;
+          }
 
-        // A returning user
-        else {
-          upsertUserProfile(user, profile);
-        }
+          // A returning user
+          else { // update profile
+            upsertUserProfile(user, profile);
+          }
 
-        // To keep the example simple, the user's GitHub profile is returned to
-        // represent the logged-in user.  In a typical application, you would want
-        // to associate the GitHub account with a user record in your database,
-        // and return that user instead.
-        return done(null, (user[0])? user[0] : user);
+          return done(null, (user[0]) ? user[0] : user);
+        });
       });
     });
   }
 ));
 
+// route middleware that will happen on every request
+router.use(function(req, res, next) {
+
+  console.log('---| Request recieved |---'); 
+
+  // log each request to the console
+  console.log(req.method, req.url);
+
+  // continue doing what we were doing and go to the route
+  next(); 
+});
+
+
 passport.serializeUser(function(user, done) {
   done(null, user);
 });
+
 
 passport.deserializeUser(function(user, done) {
   done(null, user);
 });
 
 
-/* GET users home page. */
-router.get('/', function(req, res, next) {
-  res.render('users', {
-    title: 'Users',
-    messages: req.flash(),
-    user: (req.user) ? req.user : null
-  });
-});
-
-
-/* Get user register page */
-router.get('/register', function(req, res, next){
+// Get user register page
+router.get('/register', u.isAnonymous, function(req, res, next){
 	res.render('register', {
     title: 'Register',
     messages: req.flash(),
@@ -100,12 +112,6 @@ router.get('/register', function(req, res, next){
 
 // POST method route
 router.post('/register', function (req, res, next) {
-  //res.send('Registration complete');
-
-  //insertUser({db: db, })
-  // Set initial DB var
-  var db = req.db;
-
   // Get our form values
   var user = {
     name: req.body.username,
@@ -125,7 +131,8 @@ router.post('/register', function (req, res, next) {
 });
 
 
-router.get('/login', function(req, res, next) {
+// Base login page
+router.get('/login', u.isAnonymous, function(req, res, next) {
 	res.render('login', {
     title: 'Login', 
     messages: req.flash(),
@@ -134,7 +141,8 @@ router.get('/login', function(req, res, next) {
 });
 
 
-router.get('/logout', function(req, res, next) {
+// Logout - destroy session
+router.get('/logout', u.isAuthenticated, function(req, res, next) {
   req.session.destroy();
   res.redirect('/');
 })
@@ -166,7 +174,7 @@ router.get('/auth/github',
   passport.authenticate('github', { scope: [ 'user:email' ] }),
   function(req, res){
     // The request will be redirected to GitHub for authentication, so this
-    // function will not be called.
+    //  function will not be called.
   }
 );
 
@@ -176,19 +184,97 @@ router.get('/auth/github',
 //   login page.  Otherwise, the primary route function will be called,
 //   which, in this example, will redirect the user to the home page.
 router.get('/auth/github/callback', 
-  passport.authenticate('github', { failureRedirect: '/login' }),
+  passport.authenticate('github', { failureRedirect: '/user/login' }),
   function(req, res) {
-    //req.flash('success', config.auth.github.loginSuccess);
-    //res.render('index', {
-    //  title: 'CMHome',
-    //  messages: req.flash(),
-    //  user: (req.user[0]) ? req.user[0] : req.user
-    //});
-
+    req.flash('success', config.auth.github.loginSuccess);
     res.redirect('/');
   }
 );
 
+
+// User profile
+router.get('/:userid', u.isAuthenticated, function(req, res) {
+  var promises = [];
+  var users = db.get('users');
+  var data = {};
+
+  promises.push(new Promise(function (resolve, reject) {
+    db.get('users').find({_id: req.params.userid}, function (err, d, next) {
+      data['user'] = d[0];
+      if (err) reject(err);
+      else resolve(resolve);
+    });
+  }));
+
+  promises.push(new Promise(function (resolve, reject) {
+    db.get('profiles').find({_id: req.params.userid}, function (err, d, next) {
+      data['profile'] = d[0];
+      if (err) reject(err);
+      else resolve(resolve);
+    });
+  }));
+
+  Promise.all(promises).then(function(resolve) {
+    res.render('profile', {
+      title: 'Profile', 
+      messages: req.flash(),
+      user: (req.user) ? req.user : null,
+      u: (data) ? data : 'No user found'
+    });
+  });
+});
+
+
+// Edit page for the user profile.
+router.get('/:userid/edit', u.isAuthenticated, function(req, res) {
+  if (req.params.userid == req.user._id) {
+
+    db.get('users').find({_id: req.params.userid}, function (err, d, next) {
+      if (err) reject(err);
+      else {
+        res.render('profile-edit', {
+          title: 'Edit profile', 
+          messages: req.flash(),
+          user: (d[0]) ? d[0] : null
+        });
+      }
+    });
+  }
+  else {
+    u.accessDenied(req, res);
+  }
+});
+
+
+router.post('/:userid/edit', u.isAuthenticated, function(req, res) {
+  if (req.params.userid == req.user._id) {
+
+    var promises = [];
+    var users = db.get('users');
+    var data = {};
+
+    promises.push(new Promise(function (resolve, reject) {
+      db.get('users').find({_id: req.user._id}, function (err, d, next) {
+        data['user'] = d[0];
+        data['user']['biography'] = req.body['profile-bio'];
+        db.get('users').updateById(req.user._id, data['user']);
+        if (err) reject(err);
+        else resolve(resolve);
+      });
+    }));
+
+    Promise.all(promises).then(function(resolve) {
+      res.render('profile-edit', {
+        title: 'Edit profile', 
+        messages: req.flash(),
+        user: (data['user']) ? data['user'] : null,
+      });
+    });
+  }
+  else {
+    u.accessDenied(req, res);
+  }
+});
 
 // Hash a password using Node's asynchronous pbkdf2 (key derivation) function.
 //
@@ -257,16 +343,15 @@ function insertUser(input, hash) {
   else user = input;
 
   // Submit user to db
-  users.insert({
+  return users.insert({
     "username" : user.name,
     "useremail" : user.email,
     "password" : hash.toString('hex')
   }, function(err, user) {
     if (err) {
       if (input.hasOwnProperty('res')) {
-        res.send('There was a problem adding the user to the DB.');
+        input.res.send('There was a problem adding the user to the DB.');
       }
-      console.log('There was a problem adding the user to the DB.');
     }
     else {
       // Save profile information if any came in
