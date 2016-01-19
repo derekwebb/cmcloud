@@ -215,6 +215,7 @@ router.get('/:userid', u.isAuthenticated, function(req, res) {
   }));
 
   Promise.all(promises).then(function(resolve) {
+    console.log(data);
     res.render('profile', {
       title: 'Profile', 
       messages: req.flash(),
@@ -256,7 +257,9 @@ router.post('/:userid/edit', u.isAuthenticated, function(req, res) {
     promises.push(new Promise(function (resolve, reject) {
       db.get('users').find({_id: req.user._id}, function (err, d, next) {
         data['user'] = d[0];
+        data['user']['username'] = req.body['user-name'];
         data['user']['biography'] = req.body['profile-bio'];
+        data['user']['showemail'] = req.body['show-email'];
         db.get('users').updateById(req.user._id, data['user']);
         if (err) reject(err);
         else resolve(resolve);
@@ -264,6 +267,7 @@ router.post('/:userid/edit', u.isAuthenticated, function(req, res) {
     }));
 
     Promise.all(promises).then(function(resolve) {
+      req.flash('success', config.auth.local.profileSaved);
       res.render('profile-edit', {
         title: 'Edit profile', 
         messages: req.flash(),

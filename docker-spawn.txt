@@ -1,0 +1,3 @@
+https://www.npmjs.com/package/docker-spawn
+
+Docker spawn can be used to launch docker containers with node...

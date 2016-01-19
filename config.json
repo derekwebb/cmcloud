@@ -19,7 +19,9 @@
 		  "registrationInfo": "Further information has been sent to your email address.",
 		  "loginSuccess": "Login was successful!",
 		  "loginWelcome": "Welcome back",
-		  "loginFailure": "Pass word or username is incorrect. Please try again."
+		  "loginFailure": "Pass word or username is incorrect. Please try again.",
+		  "profileSaved": "Updates to your profile were saved successfully",
+		  "usernameUpdated": "Please logout and re-login to ensure your session data is up to date."
 		},
 		"github": {
 			"loginSuccess": "GitHub login was successful!"

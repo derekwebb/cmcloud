@@ -6,9 +6,19 @@ block content
 		h1(id='page-title')= title
 
 		form(class='form profile-edit', method='post')
-			div
+			div(class="field-item")
+				label(for='user-name') User name
+				input(name='user-name', type='text', value= user.username)
+			br
+			div(class="field-item")
 				label(for='profile-bio') Mini-bio
-			div
 				textarea(name='profile-bio', rows='4', cols='40')= user.biography
+			br
+			div(class="field-item")
+				label(for'show-email') Show email
+				- if (user['showemail'] == 'on')
+					input(name='show-email', type='checkbox', checked='checked')
+				-else
+					input(name='show-email', type='checkbox')
 			br
 			input(type='submit', class="form-submit")
