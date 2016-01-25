@@ -6,6 +6,7 @@ html(lang="en")
 		block scripts
 			script(src='/javascripts/jquery.min.js')
 			script(src='/javascripts/bootstrap.min.js')
+			script(src='/javascripts/cm-interface.js')
 		block styles
 			link(rel='stylesheet', href='/stylesheets/bootstrap.min.css')
 			link(rel='stylesheet', href='/stylesheets/bootstrap-theme.min.css')
@@ -36,10 +37,16 @@ html(lang="en")
 									li
 										a(href="/user/logout") Logout
 								
-			block userStatus
-				- if (user)
-					#user-status
-						span You're logged in as #{user.username}
+					block userStatus
+						- if (user)
+							div#user-info
+								span.user-status
+									span You're logged in as 
+										a(href= '/user/'+user._id) #{user.username}
+								span |
+								span.edit-profile
+									a(href= '/user/'+user._id+'/edit') Edit profile
+			
 			block messages
 				#messages
 					if (messages.success)
@@ -69,6 +76,7 @@ html(lang="en")
 						else
 								p(class="alert alert-danger")= messages.error
 									a(href="#", class="close", data-dismiss="alert", aria-label="close") &times
+
 			#main-row(class="clearfix")
 				block content
 					#content(class="col-xs-12 col-md-8")

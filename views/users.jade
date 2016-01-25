@@ -6,25 +6,26 @@ block content
 
 		div.profile-cards.cards
 			each u, index in profiles
-				div.profile-card.card
-					- if (u.profile)
-							- if (u.profile.github)
-								div
-									a(href= '/user/'+u.user._id, class='local-profile', title='Local profile')
-										img(src= u.profile.github._json.avatar_url, height=65, width=65)
-								div
-									a(href= '/user/'+u.user._id, class='local-profile', title='Local profile')
-										span= u.profile.github.username 
-								div
-									a(href= u.profile.github.profileUrl, class='github-profile', title='GitHub profile')
-										span GitHub profile 
-					- else
-						div
-							a(href= '/user/'+u.user._id, class='local-profile', title='Local profile')
-								img(src='/images/default_profile.png', height=65, width=65)
-						div
-							a(href= '/user/'+u.user._id, class='local-profile', title='Local profile')
-								span= u.user.username
+				div.profile-card.card.col-xs-6.col-md-2
+					div.card-content
+						- if (u.profile)
+								- if (u.profile.github)
+									div
+										a(href= '/user/'+u.user._id, class='local-profile', title='Local profile')
+											img(src= u.profile.github._json.avatar_url, height=65, width=65)
+									div
+										a(href= '/user/'+u.user._id, class='local-profile', title='Local profile')
+											span= u.profile.github.username 
+									div
+										a(href= u.profile.github.profileUrl, class='github-profile', title='GitHub profile')
+											span GitHub profile 
+						- else
+							div
+								a(href= '/user/'+u.user._id, class='local-profile', title='Local profile')
+									img(src='/images/default_profile.png', height=65, width=65)
+							div
+								a(href= '/user/'+u.user._id, class='local-profile', title='Local profile')
+									span= u.user.username
 
 block sidebar
 	#sidebar(class="col-xs-12 col-md-4")

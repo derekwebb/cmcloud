@@ -67,6 +67,18 @@ a:visited {
 	color: #fff;
 }
 
+#user-info {
+	float: right;
+	padding: 5px;
+	color: #fff;
+}
+#user-info > span {
+	margin-right: 5px;
+}
+#user-info a {
+	color: #ddd608;
+}
+
 #content, #sidebar {
 }
 
@@ -102,6 +114,17 @@ a:visited {
 	border-width: 1px;
 	border-color: #ccc;
 	padding: 0 0 0 3px;
-} 
+}
+
+/* User profile cards */
+.profile-cards .card {
+	padding-left: 0;
+}
+.profile-cards .card .card-content {
+	background: #efefff;
+	min-height: 135px;
+	border: 1px solid #c0c0c0;
+}
+
 
 

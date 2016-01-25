@@ -215,7 +215,6 @@ router.get('/:userid', u.isAuthenticated, function(req, res) {
   }));
 
   Promise.all(promises).then(function(resolve) {
-    console.log(data);
     res.render('profile', {
       title: 'Profile', 
       messages: req.flash(),
@@ -350,7 +349,8 @@ function insertUser(input, hash) {
   return users.insert({
     "username" : user.name,
     "useremail" : user.email,
-    "password" : hash.toString('hex')
+    "password" : hash.toString('hex'),
+    "created" : new Date().getTime()
   }, function(err, user) {
     if (err) {
       if (input.hasOwnProperty('res')) {

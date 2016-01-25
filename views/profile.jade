@@ -1,13 +1,14 @@
 extends layout
 
+block append scripts
+	script(src='//cdn.tinymce.com/4/tinymce.min.js')
+
 block content
 	#content(class="col-xs-12 col-md-8")
 		
 		h1(id='page-title')= u.user.username
 
-		- if (u.profile && u.profile.github)
-			- console.log(user)
-			
+		- if (u.profile && u.profile.github)			
 			div
 				a(href= '/user/'+u.user._id, class= 'local-profile', title= 'Local profile img')
 					img(src= u.profile.github._json.avatar_url, height=150, width=150)
@@ -19,8 +20,21 @@ block content
 					a(href= u.profile.github._json.blog, class= 'blog-link', title= 'Blog site') Blog
 			div
 				a(href= u.profile.github.profileUrl, class= 'github-profile', title= 'GitHub profile')
-					span GitHub  
-		
+					span GitHub
+
+		- else
+			div
+				a(href= '/user/'+u.user._id, class='local-profile', title='Local profile')
+					img(src='/images/default_profile.png', height=65, width=65)
+			div
+				a(href= '/user/'+u.user._id, class='local-profile', title='Local profile')
+					span= u.user.username
+
+		- if (u.user.biography)
+			div.user-bio!= u.user.biography
+
+		- if (u.user.showemail == 'on')
+			div.user-email= u.user.useremail
 
 block sidebar
 	#sidebar(class="col-xs-12 col-md-4")

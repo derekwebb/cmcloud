@@ -9,17 +9,17 @@ block content
 			div(class="field-item")
 				label(for='user-name') User name
 				input(name='user-name', type='text', value= user.username)
-			br
+
 			div(class="field-item")
 				label(for='profile-bio') Mini-bio
 				textarea(name='profile-bio', rows='4', cols='40')= user.biography
-			br
+
 			div(class="field-item")
-				label(for'show-email') Show email
 				- if (user['showemail'] == 'on')
-					input(name='show-email', type='checkbox', checked='checked')
+					input(name='show-email', type='checkbox', id='show-email', checked='checked') 
+					label(for='show-email') Show email
 				-else
-					input(name='show-email', type='checkbox')
-			br
+					input(name='show-email', type='checkbox', id='show-email') 
+					label(for='show-email') Show email
+
 			input(type='submit', class="form-submit")
-			br
