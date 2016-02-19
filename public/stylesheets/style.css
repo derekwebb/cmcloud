@@ -50,8 +50,8 @@ a:visited {
 #header .logo {
 	float: left;
 	padding-top: 7px;
-	height: 26px;
-	margin-top: -2px;
+	height: 30px;
+	margin-top: -4px;
 }
 #header .primary-nav {
 	margin: 0 0 0 5px;
@@ -76,7 +76,7 @@ a:visited {
 	margin-right: 5px;
 }
 #user-info a {
-	color: #ddd608;
+	color: #f4edb2;
 }
 
 #content, #sidebar {
@@ -124,6 +124,32 @@ a:visited {
 	background: #efefff;
 	min-height: 135px;
 	border: 1px solid #c0c0c0;
+}
+
+
+/* user profile page */
+.user-profile .user-img {
+	float: left;
+}
+.user-profile .user-intro .user-fields {
+	float: left;
+	margin-left: 1em;
+}
+.user-profile .user-bio {
+	clear: both;
+	padding: 1em;
+	position: relative;
+	top: 3em;
+	border-top: 3px solid #C0C0C0;
+	background: #EFEFEF;
+}
+.user-profile .user-bio .bio-label {
+	position: absolute;
+	top: 0;
+	left: -2px;
+	-ms-transform: translateY(-150%); /* IE 9 */
+	-webkit-transform: translateY(-150%); /* Chrome, Safari, Opera */
+	transform: translateY(-150%);
 }
 
 
