@@ -122,9 +122,20 @@ a:visited {
 }
 .profile-cards .card .card-content {
 	background: #efefff;
-	min-height: 135px;
-	border: 1px solid #c0c0c0;
+	border: 1px solid #e1e1f1;
+	padding: 3px;
 }
+/* Users page styles */
+.users-page .profile-img {
+	float: left;
+	margin-right: .5em;
+}
+.users-page .profile-name,
+.users-page .profile-url {
+	float: left;
+	clear: right;
+}
+
 
 
 /* user profile page */
