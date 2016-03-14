@@ -11,6 +11,10 @@ block content
 				input(name='user-name', type='text', value= user.username)
 
 			div(class="field-item")
+				label(for='nickname') Nickname
+				input(name='nickname', type='text', value= user.nickname)
+
+			div(class="field-item")
 				label(for='profile-bio') Mini-bio
 				textarea(name='profile-bio', rows='4', cols='40')= user.biography
 

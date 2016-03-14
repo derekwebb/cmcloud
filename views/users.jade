@@ -5,6 +5,7 @@ block content
 		h1(id='page-title')= title
 
 		div.profile-cards.cards
+			- console.log(profiles)
 			each u, index in profiles
 				div.profile-card.card.col-xs-6.col-md-2
 					div.card-content.clearfix
@@ -26,6 +27,9 @@ block content
 							div.profile-name
 								a(href= '/user/'+u.user._id, class='local-profile', title='Local profile')
 									span= u.user.username
+						div.member-since
+							span member since
+							span.date= u.user.created 
 
 block sidebar
 	#sidebar(class="col-xs-12 col-md-4")
