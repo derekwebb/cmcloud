@@ -90,10 +90,12 @@ a:visited {
 #user-info a {
 	color: #f4edb2;
 }
-
+.member-since {
+	clear: both;
+}
 .member-since span {
 	margin-right: .25em;
-	font-variant: small-caps;
+	display: block;
 }
 
 #content, #sidebar {
@@ -148,11 +150,13 @@ a:visited {
 /* User profile cards */
 .profile-cards .card {
 	padding-left: 0;
+	padding-bottom: 15px;
 }
 .profile-cards .card .card-content {
-	background: #efefff;
+	background: #dfdfff;
 	border: 1px solid #e1e1f1;
 	padding: 3px;
+	height: 150px;
 }
 /* Users page styles */
 .users-page .profile-img {
